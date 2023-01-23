@@ -1,24 +1,21 @@
 package org.example;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 public class Main {
     static  ArrayList<departement> listDep = new ArrayList<>();
 
     public static void main(String[] args) {
-        listDep.add(new departement("1",15,49));
-        listDep.add(new departement("2",28,38));
-        listDep.add(new departement("3",45,62));
-        listDep.add(new departement("4",17,26));
-        listDep.add(new departement("5",19,15));
-        listDep.add(new departement("6",98,76));
-        listDep.add(new departement("7",36,92));
-        listDep.add(new departement("8",52,31));
-        listDep.add(new departement("9",20,270));
+        listDep.add(new departement("01",15,49));
+        listDep.add(new departement("02",28,38));
+        listDep.add(new departement("03",45,62));
+        listDep.add(new departement("04",17,26));
+        listDep.add(new departement("05",19,15));
+        listDep.add(new departement("06",98,76));
+        listDep.add(new departement("07",36,92));
+        listDep.add(new departement("08",52,31));
+        listDep.add(new departement("09",20,270));
         listDep.add(new departement("10",2,17));
         listDep.add(new departement("11",297,305));
         listDep.add(new departement("12",64,60));
@@ -130,6 +127,9 @@ public class Main {
     public static void read(){
         try {
             BufferedReader br = new BufferedReader(new FileReader("dep.json"));
+            BufferedWriter bw = new BufferedWriter(new FileWriter("depMod.js"));
+            bw.write("var data = ");
+            bw.newLine();
             String str = "";
             int x=0;
             while((str=br.readLine())!=null){
@@ -137,10 +137,23 @@ public class Main {
                     String[] tabs = str.split("dep\":\"");
                     String s =tabs[1].split("\"")[0];
                     departement d = getDep(s);
-                    System.out.println(s);
+                    if(d!=null){
+                        String json = d.jsonized();
+                        String[] mod = str.split("\\{");
+                        mod[3] = json + mod[3];
+                        String recombine=mod[0]+"{"+mod[1]+"{"+mod[2]+"{"+mod[3];
+                        bw.write(recombine);
+                        bw.newLine();
+                        System.out.println(s);
+                    }
+                }else{
+                    bw.write(str);
+                    bw.newLine();
                 }
                 x++;
             }
+            br.close();
+            bw.close();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
